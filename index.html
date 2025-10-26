@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Depósito</title>
+<style>
+body {
+  font-family: "Segoe UI", sans-serif;
+  background:#e9f5ec;
+  margin:0;
+  padding:0;
+  color:#034d1f;
+}
+.main-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 15px;
+}
+.form-container {
+  flex: 1;
+  min-width: 350px;
+  background:#fff;
+  border-radius:12px;
+  padding:25px 30px;
+  box-shadow:0 0 15px rgba(0,128,64,0.2);
+  height: fit-content;
+}
+.dashboard-container {
+  flex: 2;
+  min-width: 500px;
+  background:#fff;
+  border-radius:12px;
+  padding:25px 30px;
+  box-shadow:0 0 15px rgba(0,128,64,0.2);
+}
+h2 {
+  text-align:center;
+  color:#036b36;
+  margin-bottom:25px;
+}
+label {
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+  margin-top:14px;
+}
+input, select {
+  width:100%;
+  padding:10px;
+  border:1px solid #8bc8a0;
+  border-radius:6px;
+  background:#f6fff8;
+  font-size:14px;
+  color:#034d1f;
+}
+input:focus, select:focus {
+  outline:none;
+  border-color:#05a24d;
+  background-color:#e7fcec;
+}
+button {
+  background-color:#05a24d;
+  color:white;
+  border:none;
+  border-radius:8px;
+  padding:12px;
+  margin-top:20px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+}
+button:hover {
+  background-color:#049043;
+}
+.submit-btn {
+  width: 100%;
+}
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.dashboard-header h3 {
+  margin: 0;
+  color: #036b36;
+}
+.success {
+  color:#0f7a34;
+  font-weight:600;
+  text-align:center;
+  margin-top:10px;
+}
+.error {
+  color:#b30000;
+  text-align:center;
+  font-weight:600;
+  margin-top:10px;
+}
+.preview {
+  margin-top:15px;
+  text-align:center;
+}
+.preview img {
+  max-width:90%;
+  border-radius:10px;
+  margin-top:10px;
+  box-shadow:0 0 10px rgba(0,0,0,0.15);
+}
+
+/* === SECCIÓN DEL DASHBOARD === */
+.dashboard {
+  margin-top: 10px;
+  text-align:center;
+}
+.dashboard iframe {
+  width:100%;
+  height: 620px;
+  border:none;
+  border-radius:10px;
+  box-shadow:0 0 10px rgba(0,128,64,0.2);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+  }
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>
+</head>
+<body>
+<div class="main-container">
+  <div class="form-container">
+    <h2>Registro de Depósito</h2>
+    <form id="depositForm">
+      <label for="operacion">Número de operación</label>
+      <input type="number" id="operacion" name="operacion" required placeholder="Ejemplo: 1234567890" min="1" step="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+      <label for="monto">Monto depositado (S/)</label>
+      <input type="number" id="monto" name="monto" required placeholder="Ejemplo: 150.50" min="0" step="0.01" inputmode="decimal">
+
+      <label for="banco">Banco</label>
+      <select id="banco" name="banco" required>
+        <option value="">Seleccionar banco</option>
+        <option value="BBVA">BBVA</option>
+        <option value="BCP">BCP</option>
+        <option value="INTERBANK">INTERBANK</option>
+      </select>
+
+      <label for="departamento">Departamento</label>
+      <select id="departamento" name="departamento" required>
+        <option value="">Seleccionar departamento</option>
+      </select>
+
+      <label for="provincia">Provincia</label>
+      <select id="provincia" name="provincia" required disabled>
+        <option value="">Seleccionar provincia</option>
+      </select>
+
+      <label for="distrito">Distrito</label>
+      <select id="distrito" name="distrito" required disabled>
+        <option value="">Seleccionar distrito</option>
+      </select>
+
+      <label for="imagen">Subir comprobante (imagen)</label>
+      <input type="file" id="imagen" name="imagen" accept="image/*" required>
+      <div class="preview" id="preview"></div>
+
+      <button type="submit" class="submit-btn">Enviar Registro</button>
+      <div id="status" class="success"></div>
+    </form>
+  </div>
+
+  <!-- === DASHBOARD DE POWER BI === -->
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h3>📊 Estadísticas en tiempo real</h3>
+    </div>
+    
+    <div class="dashboard">
+    <iframe title="Estafados_Green_Home" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiZmIwYWM4N2ItNGUwMS00Y2I0LWIwZDktZjM4ZGFmMWNhNjg2IiwidCI6IjExM2MwZjNjLTgyMmQtNDM1Ny1iOTE1LTU1YzVmNTk4OGMzMCIsImMiOjR9&pageName=efebbed348a4a5334a1f" frameborder="0" allowFullScreen="true"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+// === CARGAR UBIGEOS DESDE ARCHIVO LOCAL ===
+async function cargarUbigeos() {
+  const resp = await fetch("ubigeos.json");
+  return await resp.json();
+}
+
+async function initUbigeos() {
+  const ubigeos = await cargarUbigeos();
+  const depSelect = document.getElementById("departamento");
+  const provSelect = document.getElementById("provincia");
+  const distSelect = document.getElementById("distrito");
+
+  // Cargar departamentos
+  for (let dep in ubigeos) depSelect.innerHTML += `<option value="${dep}">${dep}</option>`;
+
+  depSelect.addEventListener("change", () => {
+    const dep = depSelect.value;
+    provSelect.innerHTML = '<option value="">Seleccionar provincia</option>';
+    distSelect.innerHTML = '<option value="">Seleccionar distrito</option>';
+    distSelect.disabled = true;
+
+    if (dep) {
+      for (let prov in ubigeos[dep]) provSelect.innerHTML += `<option value="${prov}">${prov}</option>`;
+      provSelect.disabled = false;
+    } else provSelect.disabled = true;
+  });
+
+  provSelect.addEventListener("change", () => {
+    const dep = depSelect.value;
+    const prov = provSelect.value;
+    distSelect.innerHTML = '<option value="">Seleccionar distrito</option>';
+    if (prov) {
+      ubigeos[dep][prov].forEach(d => distSelect.innerHTML += `<option value="${d}">${d}</option>`);
+      distSelect.disabled = false;
+    } else distSelect.disabled = true;
+  });
+}
+initUbigeos();
+
+// === IMAGEN PREVIEW Y ENVÍO DE FORMULARIO ===
+const form = document.getElementById("depositForm");
+const status = document.getElementById("status");
+const preview = document.getElementById("preview");
+const WORKER_URL = "https://calm-queen-5669.hhermes579.workers.dev/";
+
+document.getElementById("imagen").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = ev => { preview.innerHTML = `<img src="${ev.target.result}" alt="Vista previa">`; };
+    reader.readAsDataURL(file);
+  }
+});
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  status.textContent = "";
+  status.className = "success";
+
+  const formData = new FormData(form);
+  const file = formData.get("imagen");
+
+  if (file.size > 5*1024*1024) {
+    status.textContent = "❌ La imagen no debe superar 5MB.";
+    status.className = "error";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const imageBase64 = reader.result;
+    const data = {
+      operacion: formData.get("operacion"),
+      monto: formData.get("monto"),
+      banco: formData.get("banco"),
+      departamento: formData.get("departamento"),
+      provincia: formData.get("provincia"),
+      distrito: formData.get("distrito"),
+      imageBase64
+    };
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.status === "ok") {
+        status.textContent = "✅ Registro enviado correctamente.";
+        status.className = "success";
+        form.reset();
+        preview.innerHTML = "";
+        document.getElementById("provincia").disabled = true;
+        document.getElementById("distrito").disabled = true;
+      } else {
+        status.textContent = `❌ Error: ${result.message}`;
+        status.className = "error";
+      }
+    } catch (err) {
+      console.error(err);
+      status.textContent = "❌ Error de conexión.";
+      status.className = "error";
+    }
+  };
+  reader.readAsDataURL(file);
+});
+</script>
+</body>
+</html>
