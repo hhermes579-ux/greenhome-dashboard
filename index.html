@@ -72,24 +72,29 @@ button {
   font-size:15px;
   font-weight:600;
   cursor:pointer;
+  transition: background-color 0.3s;
 }
 button:hover {
   background-color:#049043;
 }
-.submit-btn {
-  width: 100%;
+button:disabled {
+  background-color: #9cd4b3;
+  cursor: not-allowed;
 }
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  flex-wrap: wrap;
-  gap: 10px;
+.spinner {
+  border: 3px solid #ccebd7;
+  border-top: 3px solid #05a24d;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 8px;
 }
-.dashboard-header h3 {
-  margin: 0;
-  color: #036b36;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 .success {
   color:#0f7a34;
@@ -114,7 +119,7 @@ button:hover {
   box-shadow:0 0 10px rgba(0,0,0,0.15);
 }
 
-/* === SECCIÓN DEL DASHBOARD === */
+/* === DASHBOARD === */
 .dashboard {
   margin-top: 10px;
   text-align:center;
@@ -129,13 +134,7 @@ button:hover {
 
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
-  .main-container {
-    flex-direction: column;
-  }
-  .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  .main-container { flex-direction: column; }
 }
 </style>
 </head>
@@ -177,67 +176,55 @@ button:hover {
       <input type="file" id="imagen" name="imagen" accept="image/*" required>
       <div class="preview" id="preview"></div>
 
-      <button type="submit" class="submit-btn">Enviar Registro</button>
+      <button type="submit" id="submitBtn" class="submit-btn">Enviar Registro</button>
       <div id="status" class="success"></div>
     </form>
   </div>
 
-  <!-- === DASHBOARD DE POWER BI === -->
   <div class="dashboard-container">
-    <div class="dashboard-header">
-      <h3>📊 Estadísticas en tiempo real</h3>
-    </div>
-    
+    <h3>📊 Estadísticas en tiempo real</h3>
     <div class="dashboard">
-    <iframe title="Estafados_Green_Home" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiZmIwYWM4N2ItNGUwMS00Y2I0LWIwZDktZjM4ZGFmMWNhNjg2IiwidCI6IjExM2MwZjNjLTgyMmQtNDM1Ny1iOTE1LTU1YzVmNTk4OGMzMCIsImMiOjR9&pageName=efebbed348a4a5334a1f" frameborder="0" allowFullScreen="true"></iframe>
+      <iframe title="Estafados_Green_Home" src="https://app.powerbi.com/view?r=eyJrIjoiZmIwYWM4N2ItNGUwMS00Y2I0LWIwZDktZjM4ZGFmMWNhNjg2IiwidCI6IjExM2MwZjNjLTgyMmQtNDM1Ny1iOTE1LTU1YzVmNTk4OGMzMCIsImMiOjR9&pageName=efebbed348a4a5334a1f" allowFullScreen="true"></iframe>
     </div>
   </div>
 </div>
 
 <script>
-// === CARGAR UBIGEOS DESDE ARCHIVO LOCAL ===
 async function cargarUbigeos() {
   const resp = await fetch("ubigeos.json");
   return await resp.json();
 }
-
 async function initUbigeos() {
   const ubigeos = await cargarUbigeos();
-  const depSelect = document.getElementById("departamento");
-  const provSelect = document.getElementById("provincia");
-  const distSelect = document.getElementById("distrito");
-
-  // Cargar departamentos
-  for (let dep in ubigeos) depSelect.innerHTML += `<option value="${dep}">${dep}</option>`;
-
-  depSelect.addEventListener("change", () => {
-    const dep = depSelect.value;
-    provSelect.innerHTML = '<option value="">Seleccionar provincia</option>';
-    distSelect.innerHTML = '<option value="">Seleccionar distrito</option>';
-    distSelect.disabled = true;
-
-    if (dep) {
-      for (let prov in ubigeos[dep]) provSelect.innerHTML += `<option value="${prov}">${prov}</option>`;
-      provSelect.disabled = false;
-    } else provSelect.disabled = true;
+  const dep = document.getElementById("departamento");
+  const prov = document.getElementById("provincia");
+  const dist = document.getElementById("distrito");
+  for (let d in ubigeos) dep.innerHTML += `<option value="${d}">${d}</option>`;
+  dep.addEventListener("change", () => {
+    const val = dep.value;
+    prov.innerHTML = '<option value="">Seleccionar provincia</option>';
+    dist.innerHTML = '<option value="">Seleccionar distrito</option>';
+    dist.disabled = true;
+    if (val) {
+      for (let p in ubigeos[val]) prov.innerHTML += `<option value="${p}">${p}</option>`;
+      prov.disabled = false;
+    } else prov.disabled = true;
   });
-
-  provSelect.addEventListener("change", () => {
-    const dep = depSelect.value;
-    const prov = provSelect.value;
-    distSelect.innerHTML = '<option value="">Seleccionar distrito</option>';
-    if (prov) {
-      ubigeos[dep][prov].forEach(d => distSelect.innerHTML += `<option value="${d}">${d}</option>`);
-      distSelect.disabled = false;
-    } else distSelect.disabled = true;
+  prov.addEventListener("change", () => {
+    const depVal = dep.value, provVal = prov.value;
+    dist.innerHTML = '<option value="">Seleccionar distrito</option>';
+    if (provVal) {
+      ubigeos[depVal][provVal].forEach(d => dist.innerHTML += `<option value="${d}">${d}</option>`);
+      dist.disabled = false;
+    } else dist.disabled = true;
   });
 }
 initUbigeos();
 
-// === IMAGEN PREVIEW Y ENVÍO DE FORMULARIO ===
 const form = document.getElementById("depositForm");
 const status = document.getElementById("status");
 const preview = document.getElementById("preview");
+const btn = document.getElementById("submitBtn");
 const WORKER_URL = "https://calm-queen-5669.hhermes579.workers.dev/";
 
 document.getElementById("imagen").addEventListener("change", e => {
@@ -252,20 +239,21 @@ document.getElementById("imagen").addEventListener("change", e => {
 form.addEventListener("submit", async e => {
   e.preventDefault();
   status.textContent = "";
-  status.className = "success";
+  btn.disabled = true;
+  btn.innerHTML = 'Enviando... <span class="spinner"></span>';
 
   const formData = new FormData(form);
   const file = formData.get("imagen");
-
   if (file.size > 5*1024*1024) {
     status.textContent = "❌ La imagen no debe superar 5MB.";
     status.className = "error";
+    btn.disabled = false;
+    btn.innerHTML = "Enviar Registro";
     return;
   }
 
   const reader = new FileReader();
   reader.onloadend = async () => {
-    const imageBase64 = reader.result;
     const data = {
       operacion: formData.get("operacion"),
       monto: formData.get("monto"),
@@ -273,9 +261,8 @@ form.addEventListener("submit", async e => {
       departamento: formData.get("departamento"),
       provincia: formData.get("provincia"),
       distrito: formData.get("distrito"),
-      imageBase64
+      imageBase64: reader.result
     };
-
     try {
       const res = await fetch(WORKER_URL, {
         method: "POST",
@@ -295,9 +282,11 @@ form.addEventListener("submit", async e => {
         status.className = "error";
       }
     } catch (err) {
-      console.error(err);
       status.textContent = "❌ Error de conexión.";
       status.className = "error";
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = "Enviar Registro";
     }
   };
   reader.readAsDataURL(file);
